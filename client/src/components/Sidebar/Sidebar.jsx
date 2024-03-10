@@ -1,17 +1,18 @@
-import { Link, useLocation } from "react-router-dom"
+import React, { useContext, useState } from "react"
+import { Link, Navigate, useLocation, useParams } from "react-router-dom"
 import { VscWindow } from "react-icons/vsc"
 import { LuDatabase } from "react-icons/lu"
 import { IoSettingsOutline } from "react-icons/io5"
 import { FiCodesandbox } from "react-icons/fi"
 import Styles from "./Sidebar.module.css"
-import { useDispatch } from "react-redux"
 import { MdOutlineLogout } from "react-icons/md"
-import { setShowLogPopup } from "../../redux/popUp/popUpSlice"
+import { UserContext } from "../../context/UserContext"
 import Logout from "../Logout/Logout"
 const Sidebar = () => {
+  const { setShowLogPopup } = useContext(UserContext)
   let location = useLocation()
   let subpage = location.pathname
-  const dispatch = useDispatch()
+
   const LinkClasses = (type) => {
     if (type === subpage) {
       return Styles.sidebar_bg
@@ -56,7 +57,7 @@ const Sidebar = () => {
       </div>
       <div className={Styles.logout}>
         <MdOutlineLogout className={Styles.logo} />
-        <span onClick={() => dispatch(setShowLogPopup(true))}>Log out</span>
+        <span onClick={() => setShowLogPopup(true)}>Log out</span>
       </div>
       <Logout />
     </div>

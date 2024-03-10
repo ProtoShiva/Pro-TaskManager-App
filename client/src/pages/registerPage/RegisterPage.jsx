@@ -8,9 +8,9 @@ import { MdOutlineLock } from "react-icons/md"
 import { MdOutlineRemoveRedEye } from "react-icons/md"
 import { FiEyeOff } from "react-icons/fi"
 import formImage from "../../assets/Art.png"
+
 const RegisterPage = () => {
   const [errors, setErrors] = useState("")
-  const [loading, setloading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
   const [formData, setFormData] = useState({
@@ -62,7 +62,6 @@ const RegisterPage = () => {
   }
   const registerUser = async (ev) => {
     ev.preventDefault()
-    setloading(true)
     const isValid = validateForm()
     if (isValid) {
       try {
@@ -171,9 +170,7 @@ const RegisterPage = () => {
             {errors.confirmPassword && (
               <div className={Styles.error}>{errors.confirmPassword}</div>
             )}
-            <button id={Styles.regBtn}>
-              {loading ? "loading..." : "Register"}
-            </button>
+            <button id={Styles.regBtn}>Register</button>
           </form>
           <div className={Styles.bottomInput}>
             <p>Have an account?</p>

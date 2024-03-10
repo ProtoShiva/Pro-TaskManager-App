@@ -93,8 +93,10 @@ p {
   gap: 13rem;
   position: absolute;
   bottom: 0;
+  justify-content: end;
   margin-bottom: 12px;
-  width: 100%;
+  width: 52%;
+  right: 2rem;
   height: 8%;
 }
 
@@ -103,13 +105,17 @@ p {
   gap: 30px;
 }
 #date {
-  width: max-content;
-  background-color: #e2e2e2;
+  width: 185px;
+  height: 38px;
+  background-color: #fff;
   color: #707070;
   padding: 6px;
   border-radius: 10px;
   cursor: pointer;
   border: none;
+  border-radius: 10px;
+  border: 1px solid #707070;
+  margin-top: 44px;
 }
 
 #save {
@@ -178,8 +184,19 @@ p {
 .deleteBtn {
   color: #cf3636;
   padding-top: 6px;
+  cursor: pointer;
 }
 
 .selectedPriority {
   background-color: #eeecec;
+}
+
+.datePicker {
+  border: none;
+  outline: none;
+  height: 100%;
+  width: 100%;
+  font-size: 1.2em;
+  color: #707070;
+  margin-left: 6px;
 }

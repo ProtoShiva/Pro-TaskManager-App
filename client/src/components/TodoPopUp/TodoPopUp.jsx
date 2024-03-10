@@ -1,16 +1,30 @@
+import { useContext, useState } from "react"
 import Styles from "./TodoPopUp.module.css"
+import { UserContext } from "../../context/UserContext"
 import { FaPlus } from "react-icons/fa6"
 import { MdDelete } from "react-icons/md"
-import { useDispatch, useSelector } from "react-redux"
-import { setShowCheckPopup } from "../../redux/popUp/popUpSlice"
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
+import { v4 as uuidv4 } from "uuid"
 import axios from "axios"
-import { useState } from "react"
 
 const TodoPopUp = () => {
-  const [inputs, setInputs] = useState([])
-  const [duedate, setDuedate] = useState(null)
-  const showCheckPopup = useSelector((state) => state.Popup.showCheckPopup)
-  const dispatch = useDispatch()
+  const {
+    showCheckPopup,
+    setShowCheckPopup,
+    setTitle,
+    setPriority,
+    setDuedate,
+    setInputs,
+    title,
+    priority,
+    duedate,
+    inputs,
+    setSelectedId,
+    selectedId,
+    setLoggedIn,
+    loggedIn
+  } = useContext(UserContext)
 
   if (!showCheckPopup) {
     return null
@@ -47,7 +61,29 @@ const TodoPopUp = () => {
   }
 
   const addNewCard = () => {
-    dispatch(setShowCheckPopup(false))
+    if (selectedId) {
+      axios.put(`/api/cards/updatecard/${selectedId}`, {
+        title,
+        priority,
+        duedate,
+        inputs
+      })
+    } else {
+      axios.post("/api/cards/newcards", {
+        title,
+        priority,
+        duedate,
+        inputs
+      })
+    }
+
+    setSelectedId(null)
+    setShowCheckPopup(false)
+    setLoggedIn(!loggedIn)
+  }
+
+  const handleDelete = (idToDelete) => {
+    setInputs(inputs.filter((input) => input.id !== idToDelete))
   }
 
   return (
@@ -57,19 +93,39 @@ const TodoPopUp = () => {
           <p>
             Title <span>*</span>
           </p>
-          <input type="text" placeholder="Enter Task Title" />
+          <input
+            type="text"
+            placeholder="Enter Task Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </div>
         <div className={Styles.priority}>
           <p className={Styles.priorityTitle}>
             Select Priority <span>*</span>
           </p>
-          <div className={Styles.priorityName}>
+          <div
+            onClick={() => setPriority("HIGH PRIORITY")}
+            className={`${Styles.priorityName} ${
+              priority === "HIGH PRIORITY" ? Styles.selectedPriority : ""
+            }`}
+          >
             <span>&bull;</span> <p>HIGH PRIORITY</p>
           </div>
-          <div className={Styles.priorityName}>
+          <div
+            onClick={() => setPriority("MODERATE PRIORITY")}
+            className={`${Styles.priorityName} ${
+              priority === "MODERATE PRIORITY" ? Styles.selectedPriority : ""
+            }`}
+          >
             <span id={Styles.mop}>&bull;</span> <p>MODERATE PRIORITY</p>
           </div>
-          <div className={Styles.priorityName}>
+          <div
+            onClick={() => setPriority("LOW PRIORITY")}
+            className={`${Styles.priorityName} ${
+              priority === "LOW PRIORITY" ? Styles.selectedPriority : ""
+            }`}
+          >
             <span id={Styles.lop}>&bull;</span> <p>LOW PRIORITY</p>
           </div>
         </div>
@@ -78,7 +134,10 @@ const TodoPopUp = () => {
             Checklist (0/0) <span>*</span>
           </p>
         </div>
-
+        <div className={Styles.checkInput} onClick={addInput}>
+          <FaPlus />
+          <p>Add New</p>
+        </div>
         <div className={Styles.checklist}>
           {inputs.map((input) => (
             <div className={Styles.inputs}>
@@ -96,25 +155,27 @@ const TodoPopUp = () => {
                   placeholder="Enter value..."
                 />
               </div>
-              <div className={Styles.deleteBtn}>
+              <div
+                className={Styles.deleteBtn}
+                onClick={() => handleDelete(input.id)}
+              >
                 <MdDelete />
               </div>
             </div>
           ))}
         </div>
-        <div className={Styles.checkInput} onClick={addInput}>
-          <FaPlus />
-          <p>Add New</p>
+        <div id={Styles.date}>
+          <DatePicker
+            selected={duedate}
+            onChange={(date) => setDuedate(date)}
+            className={Styles.datePicker}
+            dateFormat="MM/dd/yyyy"
+            placeholderText="Select Due Date"
+          />
         </div>
         <div className={Styles.todo_footer}>
-          <div id={Styles.date}>
-            <input type="date" value={duedate} />
-          </div>
           <div>
-            <p
-              id={Styles.cancel}
-              onClick={() => dispatch(setShowCheckPopup(false))}
-            >
+            <p id={Styles.cancel} onClick={() => setShowCheckPopup(false)}>
               Cancel
             </p>
             <p id={Styles.save} onClick={addNewCard}>

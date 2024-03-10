@@ -1,20 +1,26 @@
 import Styles from "./Logout.module.css"
-import { setShowLogPopup } from "../../redux/popUp/popUpSlice"
-import { useNavigate } from "react-router-dom"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import axios from "axios"
 import {
   signOutUserFailure,
   signOutUserStart,
   signOutUserSuccess
 } from "../../redux/user/userSlice"
+import { useContext } from "react"
+import { UserContext } from "../../context/UserContext"
 const Logout = () => {
-  const showLogPopup = useSelector((state) => state.Popup.showLogPopup)
+  const {
+    showLogPopup,
+    setShowLogPopup,
+    setDoneCards,
+    setToDoCards,
+    setInProgress,
+    setBacklogCards
+  } = useContext(UserContext)
   const dispatch = useDispatch()
-  const navigate = useNavigate()
 
   const handleLogout = async () => {
-    dispatch(setShowLogPopup(false))
+    setShowLogPopup(false)
     try {
       dispatch(signOutUserStart())
       const res = await axios.get("/api/auth/logout")
@@ -26,14 +32,6 @@ const Logout = () => {
     } catch (error) {
       dispatch(signOutUserFailure(error.res.data.message))
     }
-    // axios
-    //   .post("/api/auth/logout")
-    //   .then(() => {
-    //     navigate("/")
-    //   })
-    //   .catch((error) => {
-    //     console.log(error)
-    //   })
   }
   if (!showLogPopup) {
     return null
@@ -47,10 +45,7 @@ const Logout = () => {
           <p id={Styles.logout} onClick={handleLogout}>
             Yes, Logout
           </p>
-          <p
-            id={Styles.cancel}
-            onClick={() => dispatch(setShowLogPopup(false))}
-          >
+          <p id={Styles.cancel} onClick={() => setShowLogPopup(false)}>
             Cancel
           </p>
         </div>

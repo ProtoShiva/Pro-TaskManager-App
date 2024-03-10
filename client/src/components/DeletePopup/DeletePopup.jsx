@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import Styles from "./DeletePopup.module.css"
 import axios from "axios"
 const DeletePopup = ({ cardId }) => {
-  const { showDelPopup, setShowDelPopup, setLoggedIn, loggedIn } =
+  const { showDelPopup, setShowDelPopup, refresh, setRefresh } =
     useContext(UserContext)
   const navigate = useNavigate()
   if (!showDelPopup) {
@@ -14,7 +14,9 @@ const DeletePopup = ({ cardId }) => {
   const handleDelete = async (id) => {
     try {
       setShowDelPopup(false)
-      setLoggedIn(!loggedIn)
+      await axios.delete(`/api/cards/user_cards/${id}`).then(() => {
+        setRefresh(!refresh)
+      })
 
       navigate("/dashboard")
     } catch (error) {

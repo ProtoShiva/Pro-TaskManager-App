@@ -22,8 +22,8 @@ const TodoPopUp = () => {
     inputs,
     setSelectedId,
     selectedId,
-    setLoggedIn,
-    loggedIn
+    refresh,
+    setRefresh
   } = useContext(UserContext)
 
   if (!showCheckPopup) {
@@ -60,26 +60,36 @@ const TodoPopUp = () => {
     )
   }
 
-  const addNewCard = () => {
+  const addNewCard = async () => {
     if (selectedId) {
-      axios.put(`/api/cards/updatecard/${selectedId}`, {
-        title,
-        priority,
-        duedate,
-        inputs
-      })
+      await axios
+        .put(`/api/cards/updatecard/${selectedId}`, {
+          title,
+          priority,
+          duedate,
+          inputs
+        })
+        .then(() => {
+          setRefresh(!refresh)
+        })
     } else {
-      axios.post("/api/cards/newcards", {
-        title,
-        priority,
-        duedate,
-        inputs
-      })
+      await axios
+        .post("/api/cards/newcards", {
+          title,
+          priority,
+          duedate,
+          inputs
+        })
+        .then(() => {
+          setRefresh(!refresh)
+        })
     }
-
+    setTitle("")
+    setDuedate("")
+    setInputs("")
+    setPriority("")
     setSelectedId(null)
     setShowCheckPopup(false)
-    setLoggedIn(!loggedIn)
   }
 
   const handleDelete = (idToDelete) => {
@@ -139,30 +149,31 @@ const TodoPopUp = () => {
           <p>Add New</p>
         </div>
         <div className={Styles.checklist}>
-          {inputs.map((input) => (
-            <div className={Styles.inputs}>
-              <div className={Styles.input_two}>
-                <input
-                  type="checkbox"
-                  checked={input.checked}
-                  onChange={(event) => handleCheckboxChange(event, input.id)}
-                />
-                <input
-                  className={Styles.mainInput}
-                  type="text"
-                  value={input.value}
-                  onChange={(event) => handleChange(event, input.id)}
-                  placeholder="Enter value..."
-                />
+          {inputs.length > 0 &&
+            inputs.map((input) => (
+              <div className={Styles.inputs}>
+                <div className={Styles.input_two}>
+                  <input
+                    type="checkbox"
+                    checked={input.checked}
+                    onChange={(event) => handleCheckboxChange(event, input.id)}
+                  />
+                  <input
+                    className={Styles.mainInput}
+                    type="text"
+                    value={input.value}
+                    onChange={(event) => handleChange(event, input.id)}
+                    placeholder="Enter value..."
+                  />
+                </div>
+                <div
+                  className={Styles.deleteBtn}
+                  onClick={() => handleDelete(input.id)}
+                >
+                  <MdDelete />
+                </div>
               </div>
-              <div
-                className={Styles.deleteBtn}
-                onClick={() => handleDelete(input.id)}
-              >
-                <MdDelete />
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
         <div id={Styles.date}>
           <DatePicker

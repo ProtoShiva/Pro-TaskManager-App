@@ -15,31 +15,9 @@ export function UserContextProvider({ children }) {
   const [check, setCheck] = useState(null)
   const [doneCards, setDoneCards] = useState([])
   const [selectedId, setSelectedId] = useState(null)
-  const [loggedIn, setLoggedIn] = useState(false)
   const [openDropdownId, setOpenDropdownId] = useState([])
-  useEffect(() => {
-    if (!check || loggedIn) {
-      try {
-        axios.get("/api/cards/allCards").then(({ data }) => {
-          setCheck(data)
-          setToDoCards(
-            Object.values(data).filter((card) => card.status === "To Do")
-          )
-          setBacklogCards(
-            Object.values(data).filter((card) => card.status === "BACKLOG")
-          )
-          setInProgress(
-            Object.values(data).filter((card) => card.status === "PROGRESS")
-          )
-          setDoneCards(
-            Object.values(data).filter((card) => card.status === "DONE")
-          )
-        })
-      } catch (error) {
-        console.log(error)
-      }
-    }
-  }, [loggedIn])
+  const [refresh, setRefresh] = useState(false)
+
   return (
     <UserContext.Provider
       value={{
@@ -70,8 +48,8 @@ export function UserContextProvider({ children }) {
         setSelectedId,
         openDropdownId,
         setOpenDropdownId,
-        setLoggedIn,
-        loggedIn
+        refresh,
+        setRefresh
       }}
     >
       {children}

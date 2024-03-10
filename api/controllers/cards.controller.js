@@ -20,8 +20,8 @@ export const createCards = async (req, res, next) => {
 
 export const getAllCards = async (req, res, next) => {
   try {
-    const cid = req.user.id
-    res.json(await Check.find({ owner: cid }))
+    const { status, userId } = req.query
+    res.json(await Check.find({ status: status, owner: userId }))
   } catch (error) {
     next(error)
   }

@@ -11,12 +11,18 @@ import TodoPopUp from "../TodoPopUp/TodoPopUp"
 import { useNavigate } from "react-router-dom"
 import { toast, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import { useSelector } from "react-redux"
 
 const Card = ({ card }) => {
   const [showPopup, setShowPopup] = useState(false)
   const navigate = useNavigate()
+  const currentUser = useSelector((state) => state.user.currentUser)
   const {
     setToDoCards,
+    toDoCards,
+    backlogCards,
+    inProgress,
+    doneCards,
     setShowCheckPopup,
     setShowDelPopup,
     setBacklogCards,
@@ -29,13 +35,29 @@ const Card = ({ card }) => {
     setSelectedId,
     openDropdownId,
     setOpenDropdownId,
-    doneCards,
-    user,
-    title,
-    priority,
-    duedate,
-    inputs
+    refresh,
+    setRefresh
   } = useContext(UserContext)
+
+  useEffect(() => {
+    const fetchCards = async (status) => {
+      try {
+        const { data } = await axios.get(
+          `/api/cards/allCards?status=${status}&userId=${currentUser._id}`
+        )
+        if (status === "To Do") setToDoCards(data)
+        else if (status === "BACKLOG") setBacklogCards(data)
+        else if (status === "DONE") setDoneCards(data)
+        else if (status === "PROGRESS") setInProgress(data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchCards("To Do")
+    fetchCards("BACKLOG")
+    fetchCards("DONE")
+    fetchCards("PROGRESS")
+  }, [refresh])
 
   const toggleDropdown = (id) => {
     if (openDropdownId.includes(id)) {
@@ -53,22 +75,21 @@ const Card = ({ card }) => {
     await axios
       .put(`api/cards/status/${card}`, { status: newStatus })
       .then(() => {
-        fetchCards()
+        setRefresh(!refresh)
       })
   }
 
-  const fetchCards = () => {
-    axios.get("/api/cards/allCards").then(({ data }) => {
-      setToDoCards(data.filter((card) => card.status === "To Do"))
-      setBacklogCards(data.filter((card) => card.status === "BACKLOG"))
-      setInProgress(data.filter((card) => card.status === "PROGRESS"))
-      setDoneCards(data.filter((card) => card.status === "DONE"))
-    })
-  }
-  const handleDelete = async (id) => {
+  // const fetchCards = () => {
+  //   axios.get("/api/cards/allCards").then(({ data }) => {
+  //     setToDoCards(data.filter((card) => card.status === "To Do"))
+  //     setBacklogCards(data.filter((card) => card.status === "BACKLOG"))
+  //     setInProgress(data.filter((card) => card.status === "PROGRESS"))
+  //     setDoneCards(data.filter((card) => card.status === "DONE"))
+  //   })
+  // }
+  const handleDelete = (id) => {
     togglePopup(id)
     setShowDelPopup(true)
-    await axios.delete(`/api/cards/user_cards/${id}`)
   }
 
   const handleUpdate = async (id) => {

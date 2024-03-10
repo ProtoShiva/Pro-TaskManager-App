@@ -3,12 +3,16 @@ import { FaPlus } from "react-icons/fa"
 import { BiWindows } from "react-icons/bi"
 import Card from "../Card/Card"
 import TodoPopUp from "../TodoPopUp/TodoPopUp"
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { UserContext } from "../../context/UserContext"
 
 const Board = ({ name }) => {
   const {
     setShowCheckPopup,
+    setBacklogCards,
+    setDoneCards,
+    setInProgress,
+    setTodoCards,
     toDoCards,
     backlogCards,
     inProgress,
@@ -21,8 +25,16 @@ const Board = ({ name }) => {
       <div className={Styles.top}>
         <p className={Styles.title}>{name}</p>
 
-        {name === "To do" && <FaPlus onClick={() => setShowCheckPopup(true)} />}
-        <BiWindows onClick={() => setOpenDropdownId([])} id={Styles.collapse} />
+        {name === "To do" && (
+          <FaPlus
+            onClick={() => setShowCheckPopup(true)}
+            className={Styles.collapse}
+          />
+        )}
+        <BiWindows
+          onClick={() => setOpenDropdownId([])}
+          className={Styles.collapse}
+        />
       </div>
       <div className={`${Styles.cards} ${Styles.scroll}`}>
         {name === "To do" && <Card card={toDoCards} />}

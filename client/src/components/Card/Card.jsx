@@ -9,20 +9,16 @@ import { format, parseISO, isPast } from "date-fns"
 import DeletePopup from "../DeletePopup/DeletePopup"
 import TodoPopUp from "../TodoPopUp/TodoPopUp"
 import { useNavigate } from "react-router-dom"
-import { toast, ToastContainer } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
 import { useSelector } from "react-redux"
+import { toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
-const Card = ({ card }) => {
+const Card = ({ card, section }) => {
   const [showPopup, setShowPopup] = useState(false)
   const navigate = useNavigate()
   const currentUser = useSelector((state) => state.user.currentUser)
   const {
     setToDoCards,
-    toDoCards,
-    backlogCards,
-    inProgress,
-    doneCards,
     setShowCheckPopup,
     setShowDelPopup,
     setBacklogCards,
@@ -33,10 +29,11 @@ const Card = ({ card }) => {
     setPriority,
     setInputs,
     setSelectedId,
-    openDropdownId,
-    setOpenDropdownId,
+    openDropdownIds,
+    setOpenDropdownIds,
     refresh,
-    setRefresh
+    setRefresh,
+    setStatus
   } = useContext(UserContext)
 
   useEffect(() => {
@@ -59,11 +56,17 @@ const Card = ({ card }) => {
     fetchCards("PROGRESS")
   }, [refresh])
 
-  const toggleDropdown = (id) => {
-    if (openDropdownId.includes(id)) {
-      setOpenDropdownId(openDropdownId.filter((openId) => openId !== id))
+  const toggleDropdown = (id, section) => {
+    if (openDropdownIds[section].includes(id)) {
+      setOpenDropdownIds({
+        ...openDropdownIds,
+        [section]: openDropdownIds[section].filter((openId) => openId !== id)
+      })
     } else {
-      setOpenDropdownId([...openDropdownId, id])
+      setOpenDropdownIds({
+        ...openDropdownIds,
+        [section]: [...openDropdownIds[section], id]
+      })
     }
   }
 
@@ -79,14 +82,6 @@ const Card = ({ card }) => {
       })
   }
 
-  // const fetchCards = () => {
-  //   axios.get("/api/cards/allCards").then(({ data }) => {
-  //     setToDoCards(data.filter((card) => card.status === "To Do"))
-  //     setBacklogCards(data.filter((card) => card.status === "BACKLOG"))
-  //     setInProgress(data.filter((card) => card.status === "PROGRESS"))
-  //     setDoneCards(data.filter((card) => card.status === "DONE"))
-  //   })
-  // }
   const handleDelete = (id) => {
     togglePopup(id)
     setShowDelPopup(true)
@@ -107,15 +102,25 @@ const Card = ({ card }) => {
   }
 
   const handleShare = async (id) => {
-    togglePopup(id)
-    navigate("/info")
-    const response = await axios.get(`/cards/${id}`)
+    const response = await axios.get(`/api/cards/card/${id}`)
     const cardData = response.data
-
     setTitle(cardData.title)
     setPriority(cardData.priority)
     setDuedate(cardData.duedate)
     setInputs(cardData.inputs)
+    setStatus(cardData.status)
+    navigate("/info")
+
+    togglePopup(id)
+    const infoUrl = `${window.location.origin}/info`
+    navigator.clipboard
+      .writeText(infoUrl)
+      .then(() => {
+        toast.success("URL copied to clipboard")
+      })
+      .catch((err) => {
+        toast.error("Could not copy URL:", err)
+      })
   }
 
   const handleCss = (p) => {
@@ -167,18 +172,18 @@ const Card = ({ card }) => {
             <div>
               <button
                 className={Styles.dropdown}
-                onClick={() => toggleDropdown(c._id)}
+                onClick={() => toggleDropdown(c._id, section)}
               >
                 Checklist ({calcLen(c).length}/{c.inputs.length}){" "}
                 <span id={Styles.arrow}>
-                  {openDropdownId.includes(c._id) ? (
+                  {openDropdownIds[section].includes(c._id) ? (
                     <MdKeyboardArrowUp />
                   ) : (
                     <MdKeyboardArrowDown />
                   )}
                 </span>
               </button>
-              {openDropdownId.includes(c._id) && (
+              {openDropdownIds[section].includes(c._id) && (
                 <ul className={Styles.dropdownItems}>
                   {c.inputs.map((item) => (
                     <div key={uuidv4()} className={Styles.items}>
@@ -186,6 +191,7 @@ const Card = ({ card }) => {
                         type="checkbox"
                         checked={item.checked}
                         className={Styles.checkbox}
+                        readOnly
                       />
                       {item.value}
                     </div>
@@ -193,21 +199,18 @@ const Card = ({ card }) => {
                 </ul>
               )}
             </div>
-
             <TodoPopUp />
             <div className={Styles.card_footer}>
               {" "}
-              <div
-                className={`${Styles.date} ${
-                  typeof c?.duedate === "string" && isPast(parseISO(c?.duedate))
-                    ? Styles.overdue
-                    : ""
-                } ${c.status === "DONE" ? Styles.doneCol : ""}`}
-              >
-                {typeof c?.duedate === "string"
-                  ? format(parseISO(c?.duedate), "MMM do")
-                  : ""}
-              </div>
+              {typeof c?.duedate === "string" && (
+                <div
+                  className={`${Styles.date} ${
+                    isPast(parseISO(c?.duedate)) ? Styles.overdue : ""
+                  } ${c.status === "DONE" ? Styles.doneCol : ""}`}
+                >
+                  {format(parseISO(c?.duedate), "MMM do")}
+                </div>
+              )}
               <div className={Styles.card_tab}>
                 <div onClick={() => updateCardStatus(c._id, "BACKLOG")}>
                   BACKLOG

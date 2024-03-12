@@ -1,11 +1,10 @@
-import { useContext, useState } from "react"
+import { useContext } from "react"
 import Styles from "./TodoPopUp.module.css"
 import { UserContext } from "../../context/UserContext"
 import { FaPlus } from "react-icons/fa6"
 import { MdDelete } from "react-icons/md"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
-import { v4 as uuidv4 } from "uuid"
 import axios from "axios"
 
 const TodoPopUp = () => {
@@ -151,7 +150,7 @@ const TodoPopUp = () => {
         <div className={Styles.checklist}>
           {inputs.length > 0 &&
             inputs.map((input) => (
-              <div className={Styles.inputs}>
+              <div key={input.id} className={Styles.inputs}>
                 <div className={Styles.input_two}>
                   <input
                     type="checkbox"
@@ -186,7 +185,16 @@ const TodoPopUp = () => {
         </div>
         <div className={Styles.todo_footer}>
           <div>
-            <p id={Styles.cancel} onClick={() => setShowCheckPopup(false)}>
+            <p
+              id={Styles.cancel}
+              onClick={() => {
+                setShowCheckPopup(false)
+                setTitle("")
+                setDuedate("")
+                setInputs("")
+                setPriority("")
+              }}
+            >
               Cancel
             </p>
             <p id={Styles.save} onClick={addNewCard}>

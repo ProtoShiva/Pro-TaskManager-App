@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react"
-import { Link, Navigate, useLocation, useParams } from "react-router-dom"
+import React, { useContext } from "react"
+import { Link, useLocation } from "react-router-dom"
 import { VscWindow } from "react-icons/vsc"
 import { LuDatabase } from "react-icons/lu"
 import { IoSettingsOutline } from "react-icons/io5"
@@ -8,6 +8,7 @@ import Styles from "./Sidebar.module.css"
 import { MdOutlineLogout } from "react-icons/md"
 import { UserContext } from "../../context/UserContext"
 import Logout from "../Logout/Logout"
+
 const Sidebar = () => {
   const { setShowLogPopup } = useContext(UserContext)
   let location = useLocation()

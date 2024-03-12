@@ -1,9 +1,16 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import Styles from "./AnalyticsPage.module.css"
 import { UserContext } from "../../context/UserContext"
+import axios from "axios"
 const AnalyticsPage = () => {
-  const { toDoCards, backlogCards, inProgress, doneCards, check } =
+  const { toDoCards, backlogCards, inProgress, doneCards } =
     useContext(UserContext)
+  const [check, setCheck] = useState([])
+  useEffect(() => {
+    axios.get("/api/cards/apcards").then(({ data }) => {
+      setCheck(data)
+    })
+  }, [])
 
   return (
     <div className={Styles.container}>

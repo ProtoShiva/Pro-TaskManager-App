@@ -3,22 +3,25 @@ import { FaPlus } from "react-icons/fa"
 import { BiWindows } from "react-icons/bi"
 import Card from "../Card/Card"
 import TodoPopUp from "../TodoPopUp/TodoPopUp"
-import { useContext, useEffect } from "react"
+import { useContext } from "react"
 import { UserContext } from "../../context/UserContext"
 
-const Board = ({ name }) => {
+const Board = ({ name, section }) => {
   const {
     setShowCheckPopup,
-    setBacklogCards,
-    setDoneCards,
-    setInProgress,
-    setTodoCards,
     toDoCards,
     backlogCards,
     inProgress,
     doneCards,
-    setOpenDropdownId
+    setOpenDropdownIds
   } = useContext(UserContext)
+
+  const closeDropdowns = (section) => {
+    setOpenDropdownIds((prevState) => ({
+      ...prevState,
+      [section]: []
+    }))
+  }
 
   return (
     <div className={Styles.board}>
@@ -32,15 +35,17 @@ const Board = ({ name }) => {
           />
         )}
         <BiWindows
-          onClick={() => setOpenDropdownId([])}
+          onClick={() => closeDropdowns(section)}
           className={Styles.collapse}
         />
       </div>
       <div className={`${Styles.cards} ${Styles.scroll}`}>
-        {name === "To do" && <Card card={toDoCards} />}
-        {name === "Backlog" && <Card card={backlogCards} />}
-        {name === "In Progress" && <Card card={inProgress} />}
-        {name === "Done" && <Card card={doneCards} />}
+        {name === "To do" && <Card card={toDoCards} section="todo" />}
+        {name === "Backlog" && <Card card={backlogCards} section="backlog" />}
+        {name === "In Progress" && (
+          <Card card={inProgress} section="progress" />
+        )}
+        {name === "Done" && <Card card={doneCards} section="done" />}
       </div>
 
       <TodoPopUp />

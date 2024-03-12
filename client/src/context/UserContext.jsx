@@ -1,5 +1,4 @@
-import { createContext, useEffect, useState } from "react"
-import axios from "axios"
+import { createContext, useState } from "react"
 export const UserContext = createContext({})
 export function UserContextProvider({ children }) {
   const [title, setTitle] = useState("")
@@ -12,10 +11,15 @@ export function UserContextProvider({ children }) {
   const [toDoCards, setToDoCards] = useState([])
   const [backlogCards, setBacklogCards] = useState([])
   const [inProgress, setInProgress] = useState([])
-  const [check, setCheck] = useState(null)
+  const [status, setStatus] = useState([])
   const [doneCards, setDoneCards] = useState([])
   const [selectedId, setSelectedId] = useState(null)
-  const [openDropdownId, setOpenDropdownId] = useState([])
+  const [openDropdownIds, setOpenDropdownIds] = useState({
+    todo: [],
+    backlog: [],
+    done: [],
+    progress: []
+  })
   const [refresh, setRefresh] = useState(false)
 
   return (
@@ -25,7 +29,6 @@ export function UserContextProvider({ children }) {
         setShowCheckPopup,
         showLogPopup,
         setShowLogPopup,
-        check,
         showDelPopup,
         setShowDelPopup,
         toDoCards,
@@ -46,10 +49,12 @@ export function UserContextProvider({ children }) {
         inputs,
         selectedId,
         setSelectedId,
-        openDropdownId,
-        setOpenDropdownId,
         refresh,
-        setRefresh
+        setRefresh,
+        openDropdownIds,
+        setOpenDropdownIds,
+        status,
+        setStatus
       }}
     >
       {children}

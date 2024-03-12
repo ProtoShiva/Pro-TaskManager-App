@@ -8,15 +8,9 @@ import {
 } from "../../redux/user/userSlice"
 import { useContext } from "react"
 import { UserContext } from "../../context/UserContext"
+
 const Logout = () => {
-  const {
-    showLogPopup,
-    setShowLogPopup,
-    setDoneCards,
-    setToDoCards,
-    setInProgress,
-    setBacklogCards
-  } = useContext(UserContext)
+  const { showLogPopup, setShowLogPopup } = useContext(UserContext)
   const dispatch = useDispatch()
 
   const handleLogout = async () => {

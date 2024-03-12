@@ -3,10 +3,13 @@ import { UserContext } from "../../context/UserContext"
 import { useNavigate } from "react-router-dom"
 import Styles from "./DeletePopup.module.css"
 import axios from "axios"
+
 const DeletePopup = ({ cardId }) => {
   const { showDelPopup, setShowDelPopup, refresh, setRefresh } =
     useContext(UserContext)
+
   const navigate = useNavigate()
+
   if (!showDelPopup) {
     return null
   }

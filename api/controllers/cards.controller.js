@@ -27,6 +27,15 @@ export const getAllCards = async (req, res, next) => {
   }
 }
 
+export const getCards = async (req, res, next) => {
+  try {
+    const cid = req.user.id
+    res.json(await Check.find({ owner: cid }))
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const updates = async (req, res, next) => {
   const { id } = req.params
   const { title, priority, duedate, inputs } = req.body
@@ -107,6 +116,34 @@ export const deleteCard = async (req, res, next) => {
     }
 
     res.send(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const sortedCards = async (req, res, next) => {
+  const { timeframe, userId } = req.query
+  let startDate, endDate
+  if (timeframe === "today") {
+    startDate = new Date()
+    startDate.setHours(0, 0, 0, 0)
+    endDate = new Date(startDate)
+    endDate.setDate(startDate.getDate() + 1)
+  } else if (timeframe === "week") {
+    startDate = new Date()
+    startDate.setDate(startDate.getDate() - 7)
+    endDate = new Date()
+  } else if (timeframe === "month") {
+    startDate = new Date()
+    startDate.setMonth(startDate.getMonth() - 1)
+    endDate = new Date()
+  }
+  try {
+    const cards = await Check.find({
+      owner: userId,
+      createdAt: { $gte: startDate, $lt: endDate }
+    }).sort({ createdAt: -1 })
+    res.json(cards)
   } catch (error) {
     next(error)
   }

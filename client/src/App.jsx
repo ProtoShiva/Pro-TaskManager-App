@@ -12,7 +12,7 @@ import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { UserContextProvider } from "./context/UserContext.jsx"
 
-axios.defaults.baseURL = "https://pro-task-manager-api.vercel.app"
+axios.defaults.baseURL = "http://localhost:3000"
 axios.defaults.withCredentials = true
 
 const App = () => {

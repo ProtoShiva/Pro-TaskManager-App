@@ -73,9 +73,6 @@ const Card = ({ card, section }) => {
     }
   }
 
-  // const togglePopup = (id) => {
-  //   setShowPopup((prev) => ({ ...prev, [id]: !prev[id] }))
-  // }
   const togglePopup = (id) => {
     const newShowPopup = Object.keys(showPopup).reduce((result, key) => {
       result[key] = false
@@ -165,8 +162,9 @@ const Card = ({ card, section }) => {
             <div className={Styles.card_top}>
               <div className={Styles.card_lables}>
                 <div id={Styles.prior}>
-                  {" "}
-                  <span className={handleCss(c.priority)}>&bull;</span>
+                  {c.priority !== "" && (
+                    <span className={handleCss(c.priority)}>&bull;</span>
+                  )}
                   <p>{c.priority}</p>
                 </div>
                 <div className={Styles.threeDot}>

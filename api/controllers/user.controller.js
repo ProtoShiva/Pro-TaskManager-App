@@ -7,20 +7,34 @@ export const test = (req, res) => {
 }
 
 export const updateUser = async (req, res, next) => {
-  const { firstName, password } = req.body
+  const { firstName, password, oldPassword } = req.body
+  console.log(firstName, password, oldPassword)
   const { id } = req.params
   const users = await User.findById(id)
+  let isUpdated = false
   if (req.user.id !== req.params.id)
     return next(errorHandler(401, "You can only update your own account!"))
   try {
     if (firstName) {
       users.firstName = firstName
+      isUpdated = true
     }
-    if (password) {
-      users.password = bcrypt.hashSync(password, bcryptSalt)
+    if (oldPassword) {
+      const validPassword = bcrypt.compareSync(oldPassword, users.password)
+      if (!validPassword) {
+        res.status(422).json("pass not ok")
+      } else if (password) {
+        users.password = bcrypt.hashSync(password, bcryptSalt)
+        isUpdated = true
+      }
     }
+
     await users.save()
-    res.json({ msg: "User updated successfully" })
+    if (isUpdated) {
+      res.status(200).json({ msg: "User updated successfully" })
+    } else {
+      res.status(422).json({ msg: "No updates were made" })
+    }
   } catch (error) {
     next(error)
   }

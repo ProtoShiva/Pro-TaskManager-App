@@ -16,11 +16,13 @@ const SettingsPage = () => {
   const [showConfirm, setShowConfirm] = useState(false)
   const [newPassword, setNewPassword] = useState("")
   const currentUser = useSelector((state) => state.user.currentUser)
+
   const handleUpdate = async (event) => {
     event.preventDefault()
     const updatedUser = {}
     if (name) updatedUser.firstName = name
     if (newPassword) updatedUser.password = newPassword
+    if (oldPassword) updatedUser.oldPassword = oldPassword
 
     try {
       const response = await axios.put(
@@ -30,12 +32,15 @@ const SettingsPage = () => {
 
       if (response.status === 200) {
         toast.success("User updated successfully")
-      } else {
-        toast.error("Error updating user")
       }
     } catch (error) {
-      console.error("Error updating user", error)
+      if (error.response && error.response.status === 422) {
+        toast.error("Old Password is incorrect")
+      }
     }
+
+    setNewPassword("")
+    setOldPassword("")
   }
 
   return (
@@ -61,6 +66,7 @@ const SettingsPage = () => {
                 type={showPassword ? "text" : "password"}
                 onChange={(ev) => setOldPassword(ev.target.value)}
                 placeholder="Old Password"
+                value={oldPassword}
               />
               {showPassword ? (
                 <MdOutlineRemoveRedEye
@@ -80,6 +86,7 @@ const SettingsPage = () => {
                 className={Styles.mainInput}
                 type={showConfirm ? "text" : "password"}
                 placeholder="New Password"
+                value={newPassword}
                 onChange={(ev) => setNewPassword(ev.target.value)}
               />
               {showConfirm ? (

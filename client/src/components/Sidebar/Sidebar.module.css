@@ -48,6 +48,8 @@
   width: 170px;
   height: 28px;
   margin-bottom: 55px;
+  text-decoration: none;
+  color: #000;
 }
 
 .inner_box {

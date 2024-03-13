@@ -6,7 +6,7 @@ import { format, parseISO, isPast } from "date-fns"
 import { v4 as uuidv4 } from "uuid"
 
 const SharePage = () => {
-  const { status, title, priority, duedate, inputs } = useContext(UserContext)
+  const { shareCard } = useContext(UserContext)
 
   const handleCss = (p) => {
     switch (p) {
@@ -22,7 +22,7 @@ const SharePage = () => {
   }
 
   const calcLen = () => {
-    return inputs.filter((i) => {
+    return shareCard.fields.filter((i) => {
       return i.checked === true
     })
   }
@@ -39,20 +39,20 @@ const SharePage = () => {
           <div className={Styles.card_lables}>
             <div id={Styles.prior}>
               {" "}
-              <span className={handleCss(priority)}>&bull;</span>
-              <p>{priority}</p>
+              <span className={handleCss(shareCard.prior)}>&bull;</span>
+              <p>{shareCard.prior}</p>
             </div>
           </div>
         </div>
-        <div className={Styles.card_title}>{title}</div>
+        <div className={Styles.card_title}>{shareCard.heading}</div>
         <div className={Styles.scrolldrop}>
           <button className={Styles.dropdown}>
-            Checklist ({calcLen().length}/{inputs.length}){" "}
+            Checklist ({calcLen().length}/{shareCard.fields.length}){" "}
           </button>
           <div>
             {
               <ul className={Styles.dropdownItems}>
-                {inputs.map((item) => (
+                {shareCard.fields.map((item) => (
                   <div key={uuidv4()} className={Styles.items}>
                     <input
                       type="checkbox"
@@ -67,18 +67,12 @@ const SharePage = () => {
             }
           </div>
         </div>
-        {duedate && (
+        {shareCard.date && (
           <div className={Styles.footer_due}>
             <p>Due Date</p>
-            <div
-              className={`${Styles.date} ${
-                typeof duedate === "string" && isPast(parseISO(duedate))
-                  ? Styles.overdue
-                  : ""
-              } ${status === "DONE" ? Styles.doneCol : ""}`}
-            >
-              {typeof duedate === "string"
-                ? format(parseISO(duedate), "MMM do")
+            <div className={Styles.date}>
+              {typeof shareCard.date === "string"
+                ? format(parseISO(shareCard.date), "MMM do")
                 : ""}
             </div>
           </div>

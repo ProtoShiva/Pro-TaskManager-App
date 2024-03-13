@@ -1,10 +1,11 @@
-.main {
+.main_todo {
   position: fixed;
   inset: 0px;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.02);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 5;
 }
 
 .popup_inner {
@@ -198,6 +199,7 @@ p {
   width: 90%;
   font-size: 1.2em;
   color: #707070;
+  font-weight: 500;
   margin-left: 9px;
 
   cursor: pointer;

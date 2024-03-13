@@ -3,21 +3,18 @@ import { UserContext } from "../../context/UserContext"
 import { useNavigate } from "react-router-dom"
 import Styles from "./DeletePopup.module.css"
 import axios from "axios"
-
-const DeletePopup = ({ cardId }) => {
-  const { showDelPopup, setShowDelPopup, refresh, setRefresh } =
+const DeletePopup = () => {
+  const { showDelPopup, setShowDelPopup, refresh, setRefresh, delSelectId } =
     useContext(UserContext)
-
   const navigate = useNavigate()
-
   if (!showDelPopup) {
     return null
   }
 
-  const handleDelete = async (id) => {
+  const handleDelete = async () => {
     try {
       setShowDelPopup(false)
-      await axios.delete(`/api/cards/user_cards/${id}`).then(() => {
+      await axios.delete(`/api/cards/user_cards/${delSelectId}`).then(() => {
         setRefresh(!refresh)
       })
 
@@ -27,11 +24,11 @@ const DeletePopup = ({ cardId }) => {
     }
   }
   return (
-    <div className={Styles.main}>
+    <div className={Styles.main_del}>
       <div className={Styles.popup_inner}>
         <p>Are you sure you want to Delete?</p>
         <div>
-          <p id={Styles.logout} onClick={() => handleDelete(cardId)}>
+          <p id={Styles.logout} onClick={handleDelete}>
             Yes, Delete
           </p>
           <p id={Styles.cancel} onClick={() => setShowDelPopup(false)}>

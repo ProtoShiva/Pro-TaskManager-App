@@ -19,6 +19,7 @@ const Card = ({ card, section }) => {
   const currentUser = useSelector((state) => state.user.currentUser)
   const {
     setToDoCards,
+    setDelSelectId,
     setShowCheckPopup,
     setShowDelPopup,
     setBacklogCards,
@@ -33,7 +34,9 @@ const Card = ({ card, section }) => {
     setOpenDropdownIds,
     refresh,
     setRefresh,
-    setStatus
+    setStatus,
+    shareCard,
+    setShareCard
   } = useContext(UserContext)
 
   useEffect(() => {
@@ -70,8 +73,18 @@ const Card = ({ card, section }) => {
     }
   }
 
+  // const togglePopup = (id) => {
+  //   setShowPopup((prev) => ({ ...prev, [id]: !prev[id] }))
+  // }
   const togglePopup = (id) => {
-    setShowPopup((prev) => ({ ...prev, [id]: !prev[id] }))
+    const newShowPopup = Object.keys(showPopup).reduce((result, key) => {
+      result[key] = false
+      return result
+    }, {})
+
+    newShowPopup[id] = !showPopup[id]
+
+    setShowPopup(newShowPopup)
   }
 
   const updateCardStatus = async (card, newStatus) => {
@@ -83,6 +96,7 @@ const Card = ({ card, section }) => {
   }
 
   const handleDelete = (id) => {
+    setDelSelectId(id)
     togglePopup(id)
     setShowDelPopup(true)
   }
@@ -104,12 +118,14 @@ const Card = ({ card, section }) => {
   const handleShare = async (id) => {
     const response = await axios.get(`/api/cards/card/${id}`)
     const cardData = response.data
-    setTitle(cardData.title)
-    setPriority(cardData.priority)
-    setDuedate(cardData.duedate)
-    setInputs(cardData.inputs)
-    setStatus(cardData.status)
     navigate("/info")
+    setShareCard({
+      heading: cardData.title,
+      prior: cardData.priority,
+      date: cardData.duedate,
+      fields: cardData.inputs,
+      stat: cardData.status
+    })
 
     togglePopup(id)
     const infoUrl = `${window.location.origin}/info`
@@ -119,7 +135,7 @@ const Card = ({ card, section }) => {
         toast.success("URL copied to clipboard")
       })
       .catch((err) => {
-        toast.error("Could not copy URL:", err)
+        toast.error("Could not copy URL: ")
       })
   }
 
@@ -202,7 +218,7 @@ const Card = ({ card, section }) => {
             <TodoPopUp />
             <div className={Styles.card_footer}>
               {" "}
-              {typeof c?.duedate === "string" && (
+              {typeof c?.duedate === "string" ? (
                 <div
                   className={`${Styles.date} ${
                     isPast(parseISO(c?.duedate)) ? Styles.overdue : ""
@@ -210,15 +226,33 @@ const Card = ({ card, section }) => {
                 >
                   {format(parseISO(c?.duedate), "MMM do")}
                 </div>
+              ) : (
+                <div
+                  className={Styles.date}
+                  style={{ backgroundColor: "#fff" }}
+                ></div>
               )}
               <div className={Styles.card_tab}>
-                <div onClick={() => updateCardStatus(c._id, "BACKLOG")}>
-                  BACKLOG
-                </div>
-                <div onClick={() => updateCardStatus(c._id, "PROGRESS")}>
-                  PROGRESS
-                </div>
-                <div onClick={() => updateCardStatus(c._id, "DONE")}>DONE</div>
+                {section !== "todo" && (
+                  <div onClick={() => updateCardStatus(c._id, "To Do")}>
+                    TO DO
+                  </div>
+                )}
+                {section !== "backlog" && (
+                  <div onClick={() => updateCardStatus(c._id, "BACKLOG")}>
+                    BACKLOG
+                  </div>
+                )}
+                {section !== "progress" && (
+                  <div onClick={() => updateCardStatus(c._id, "PROGRESS")}>
+                    PROGRESS
+                  </div>
+                )}
+                {section !== "done" && (
+                  <div onClick={() => updateCardStatus(c._id, "DONE")}>
+                    DONE
+                  </div>
+                )}
               </div>
             </div>
           </div>

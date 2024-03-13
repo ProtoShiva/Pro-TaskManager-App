@@ -32,7 +32,7 @@ const Logout = () => {
   }
 
   return (
-    <div className={Styles.main}>
+    <div className={Styles.main_log}>
       <div className={Styles.popup_inner}>
         <p>Are you sure you want to Logout?</p>
         <div>

@@ -12,6 +12,7 @@ const AnalyticsPage = () => {
     })
   }, [])
 
+  function calDuedate() {}
   return (
     <div className={Styles.container}>
       <h2>Analytics</h2>
@@ -21,25 +22,33 @@ const AnalyticsPage = () => {
             <p>
               <span className={Styles.dot}>&bull;</span>Backlog Tasks
             </p>
-            <div className={Styles.number}>{backlogCards.length}</div>
+            <div className={Styles.number}>
+              {check.filter((card) => card.status === "BACKLOG").length}
+            </div>
           </div>
           <div>
             <p>
               <span className={Styles.dot}>&bull;</span>To-do Tasks
             </p>
-            <div className={Styles.number}>{toDoCards.length}</div>
+            <div className={Styles.number}>
+              {check.filter((card) => card.status === "To Do").length}
+            </div>
           </div>
           <div>
             <p>
               <span className={Styles.dot}>&bull;</span>In-Progress Tasks
             </p>
-            <div className={Styles.number}>{inProgress.length}</div>
+            <div className={Styles.number}>
+              {check.filter((card) => card.status === "PROGRESS").length}
+            </div>
           </div>
           <div>
             <p>
               <span className={Styles.dot}>&bull;</span>Completed Tasks
             </p>
-            <div className={Styles.number}>{doneCards.length}</div>
+            <div className={Styles.number}>
+              {check.filter((card) => card.status === "DONE").length}
+            </div>
           </div>
         </section>
         <section className={Styles.card2}>
@@ -76,7 +85,13 @@ const AnalyticsPage = () => {
             <p>
               <span className={Styles.dot}>&bull;</span>Due Date Tasks
             </p>
-            <div className={Styles.number}>16</div>
+            <div className={Styles.number}>
+              {
+                check.filter(
+                  (card) => card.duedate !== null && card.status !== "DONE"
+                ).length
+              }
+            </div>
           </div>
         </section>
       </main>

@@ -11,14 +11,21 @@ export function UserContextProvider({ children }) {
   const [toDoCards, setToDoCards] = useState([])
   const [backlogCards, setBacklogCards] = useState([])
   const [inProgress, setInProgress] = useState([])
-  const [status, setStatus] = useState([])
   const [doneCards, setDoneCards] = useState([])
   const [selectedId, setSelectedId] = useState(null)
+  const [delSelectId, setDelSelectId] = useState(null)
   const [openDropdownIds, setOpenDropdownIds] = useState({
     todo: [],
     backlog: [],
     done: [],
     progress: []
+  })
+  const [shareCard, setShareCard] = useState({
+    heading: "",
+    prior: "",
+    date: null,
+    fields: [],
+    stat: ""
   })
   const [refresh, setRefresh] = useState(false)
 
@@ -53,8 +60,10 @@ export function UserContextProvider({ children }) {
         setRefresh,
         openDropdownIds,
         setOpenDropdownIds,
-        status,
-        setStatus
+        delSelectId,
+        setDelSelectId,
+        shareCard,
+        setShareCard
       }}
     >
       {children}

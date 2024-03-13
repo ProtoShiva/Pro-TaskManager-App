@@ -84,8 +84,8 @@ const TodoPopUp = () => {
         })
     }
     setTitle("")
-    setDuedate("")
-    setInputs("")
+    setDuedate(null)
+    setInputs([])
     setPriority("")
     setSelectedId(null)
     setShowCheckPopup(false)
@@ -96,7 +96,7 @@ const TodoPopUp = () => {
   }
 
   return (
-    <div className={Styles.main}>
+    <div className={Styles.main_todo}>
       <div className={Styles.popup_inner}>
         <div className={Styles.title}>
           <p>
@@ -188,11 +188,13 @@ const TodoPopUp = () => {
             <p
               id={Styles.cancel}
               onClick={() => {
-                setShowCheckPopup(false)
-                setTitle("")
-                setDuedate("")
-                setInputs("")
-                setPriority("")
+                {
+                  setShowCheckPopup(false)
+                  setTitle("")
+                  setDuedate(null)
+                  setInputs([])
+                  setPriority("")
+                }
               }}
             >
               Cancel

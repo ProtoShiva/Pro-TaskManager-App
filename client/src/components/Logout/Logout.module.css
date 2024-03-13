@@ -1,10 +1,11 @@
-.main {
+.main_log {
   position: fixed;
   inset: 0px;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 80;
 }
 
 .popup_inner {
@@ -20,12 +21,12 @@
   justify-content: center;
   align-items: center;
 }
-.popup_inner div{
+.popup_inner div {
   display: flex;
   flex-direction: column;
 }
 
-.popup_inner p{
+.popup_inner p {
   font-size: 17px;
   width: 100%;
 }
@@ -38,7 +39,6 @@
   text-align: center;
   cursor: pointer;
 }
-
 
 #logout {
   background-color: #17a2b8;

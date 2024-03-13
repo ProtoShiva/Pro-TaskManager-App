@@ -12,7 +12,7 @@ const port = 3000
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:5173"
+    origin: "https://pro-task-manager-client.vercel.app"
   })
 )
 
